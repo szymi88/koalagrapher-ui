@@ -1,10 +1,19 @@
 // src/components/SectionManager.js
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import styled from 'styled-components';
+import { v4 as uuidv4 } from 'uuid'; // Import UUID library
+
 
 const SectionManager = ({ sections, setSections }) => {
     const [sectionName, setSectionName] = useState('');
+    const navigate = useNavigate();
+
+    const handleGenerateGalleryUrl = () => {
+        const resultId = uuidv4(); // Generate a unique ID
+        navigate(`/gallery/${resultId}`);
+    };
 
     const addSection = () => {
         setSections([...sections, { id: `section-${Date.now()}`, name: sectionName, images: [] }]);
@@ -61,6 +70,11 @@ const SectionManager = ({ sections, setSections }) => {
 
     return (
         <SectionManagerWrapper>
+            <DragDropContext onDragEnd={onDragEnd}>
+                {sections.map((section) => (
+                    <Section key={section.id} section={section} onDropImages={onDropImages}/>
+                ))}
+            </DragDropContext>
             <input
                 type="text"
                 value={sectionName}
@@ -68,16 +82,13 @@ const SectionManager = ({ sections, setSections }) => {
                 placeholder="Section Name"
             />
             <button onClick={addSection}>Add Section</button>
-            <DragDropContext onDragEnd={onDragEnd}>
-                {sections.map((section) => (
-                    <Section key={section.id} section={section} onDropImages={onDropImages} />
-                ))}
-            </DragDropContext>
+            <button onClick={handleGenerateGalleryUrl}>Generate URL</button>
+
         </SectionManagerWrapper>
     );
 };
 
-const Section = ({ section, onDropImages }) => {
+const Section = ({section, onDropImages}) => {
     const handleDrop = (event) => {
         event.preventDefault();
         const files = event.dataTransfer.files;

@@ -1,0 +1,53 @@
+name: React App CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18.17.0'  # Adjust according to your project's requirements
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run tests
+        run: npm test -- --watchAll=false
+
+      - name: Build React app
+        run: npm run build
+
+      # Optional: Archive build artifacts (can be helpful for debugging)
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: build
+          path: build/
+
+      # Copy build folder to remote server using scp
+      - name: Copy build to remote server
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}  # Private key stored as a GitHub secret
+        run: |
+          # Start SSH agent and add private key
+          eval "$(ssh-agent -s)"
+          echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add - > /dev/null
+          
+          # Create the SSH config to ignore host key checking
+          echo -e "Host *\n\tStrictHostKeyChecking no\n" > ~/.ssh/config
+
+          # Copy the build directory to the remote server (adjust path as needed)
+          scp -r build/ user@your-server.com:/path/to/remote/directory

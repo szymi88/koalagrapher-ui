@@ -50,4 +50,4 @@ jobs:
           echo -e "Host *\n\tStrictHostKeyChecking no\n" > ~/.ssh/config
 
           # Copy the build directory to the remote server (adjust path as needed)
-          scp -r build/ user@your-server.com:/path/to/remote/directory
+          scp -r build/ ubuntu@3.16.21.171:/var/www/html/koalagrapher-front

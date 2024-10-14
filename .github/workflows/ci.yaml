@@ -47,7 +47,7 @@ jobs:
           echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add - > /dev/null
           
           # Create the SSH config to ignore host key checking
-          echo -e "Host *\n\tStrictHostKeyChecking no\n" > ~/.ssh/config
+          #echo -e "Host *\n\tStrictHostKeyChecking no\n" > ~/.ssh/config
 
           # Copy the build directory to the remote server (adjust path as needed)
           scp -r build/ ubuntu@3.16.21.171:/var/www/html/koalagrapher-front

@@ -14,7 +14,7 @@ const Gallery = ({sections}) => {
                     {section.name}
                     {section.images.map((image, index) => (
                         <div key={index} className="image-container">
-                            <img src={image}/>
+                            <img src={image} alt={"image_"+index}/>
                         </div>
                     ))}
                 </div>

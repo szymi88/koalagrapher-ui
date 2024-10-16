@@ -5,7 +5,6 @@ import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import styled from 'styled-components';
 import { v4 as uuidv4 } from 'uuid'; // Import UUID library
 
-
 const SectionManager = ({ sections, setSections }) => {
     const [sectionName, setSectionName] = useState('');
     const navigate = useNavigate();
@@ -58,7 +57,21 @@ const SectionManager = ({ sections, setSections }) => {
         }
     };
 
-    const onDropImages = (sectionId, imageUrls) => {
+    const onDropImages = async (sectionId, files) => {
+        const imageUrls = [];
+
+        for (let i = 0; i < files.length; i++) {
+            const file = files[i];
+
+            // Mock the upload process, returning a local file path URL
+            const imageUrl = URL.createObjectURL(file); // Replace with actual upload logic
+            imageUrls.push(imageUrl);
+
+            // If implementing real upload:
+            // const uploadedImageUrl = await uploadImageToBackend(file);
+            // imageUrls.push(uploadedImageUrl);
+        }
+
         const updatedSections = sections.map((section) => {
             if (section.id === sectionId) {
                 return { ...section, images: [...section.images, ...imageUrls] };
@@ -72,7 +85,7 @@ const SectionManager = ({ sections, setSections }) => {
         <SectionManagerWrapper>
             <DragDropContext onDragEnd={onDragEnd}>
                 {sections.map((section) => (
-                    <Section key={section.id} section={section} onDropImages={onDropImages}/>
+                    <Section key={section.id} section={section} onDropImages={onDropImages} />
                 ))}
             </DragDropContext>
             <input
@@ -83,31 +96,16 @@ const SectionManager = ({ sections, setSections }) => {
             />
             <button onClick={addSection}>Add Section</button>
             <button onClick={handleGenerateGalleryUrl}>Generate URL</button>
-
         </SectionManagerWrapper>
     );
 };
 
-const Section = ({section, onDropImages}) => {
+const Section = ({ section, onDropImages }) => {
     const handleDrop = (event) => {
         event.preventDefault();
         const files = event.dataTransfer.files;
-        const imageUrls = [];
-
         if (files.length > 0) {
-            for (let i = 0; i < files.length; i++) {
-                const file = files[i];
-                const reader = new FileReader();
-
-                reader.onload = (e) => {
-                    imageUrls.push(e.target.result);
-                    if (imageUrls.length === files.length) {
-                        onDropImages(section.id, imageUrls);
-                    }
-                };
-
-                reader.readAsDataURL(file);
-            }
+            onDropImages(section.id, files);
         }
     };
 
@@ -149,7 +147,7 @@ const Section = ({section, onDropImages}) => {
 };
 
 const SectionManagerWrapper = styled.div`
-  padding: 20px;
+    padding: 20px;
 `;
 
 const SectionWrapper = styled.div`

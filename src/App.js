@@ -4,6 +4,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import SectionManager from './components/SectionManager';
 import Gallery from './components/Gallery';
 
+
 function App() {
     const [sections, setSections] = useState([]);
 
@@ -12,8 +13,7 @@ function App() {
             <Routes>
                 <Route path="/" element={<SectionManager sections={sections} setSections={setSections}/>}>
                 </Route>
-                <Route path="/gallery/:resultId" element={<Gallery sections={sections}/>}>
-                </Route>
+                <Route path="/gallery/:resultId" element={<Gallery sections={sections}/>}/>
             </Routes>
         </BrowserRouter>
     );

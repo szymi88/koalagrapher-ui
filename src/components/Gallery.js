@@ -1,23 +1,26 @@
 import React from 'react';
-import PhotoGallery from './PhotoGallery';
+import GallerySection from './GallerySection';
 import styles from './Gallery.module.css';
+import {testSections} from '../data/gallery.js';
 
 const Gallery = ({sections}) => {
     // const {resultId} = useParams();
+    if (sections.length === 0) {
+        sections = testSections
+    }
 
     const children = sections.map((section) => (
-        <div className={styles.test}>
-            <h1>{section.name}</h1>
-            <PhotoGallery images={section.images}/>
+        <div>
+            <GallerySection images={section.images} name={section.name} />
         </div>
     ))
 
     return (
         <div>
             <FullPagePhotoWithTitle photoUrl={sections[0].images[0]} title={"Title - TODO"}/>
-            {<div className={styles["gallery__sections"]}>
+            <div className={styles["gallery__sections"]}>
                 {children}
-            </div>}
+            </div>
         </div>
     );
 
@@ -29,8 +32,10 @@ const Gallery = ({sections}) => {
                     <h1>{title}</h1>
                 </div>
             </div>
-    );
+        );
     }
 }
+
+
 
 export default Gallery;

@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - master
+      - feature/editable-gallery
   pull_request:
     branches:
       - master

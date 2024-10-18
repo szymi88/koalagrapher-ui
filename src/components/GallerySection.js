@@ -2,50 +2,60 @@ import React from "react";
 import styles from './GallerySection.module.css';
 
 
-import {MasonryPhotoAlbum, RowsPhotoAlbum} from "react-photo-album";
+import {MasonryPhotoAlbum} from "react-photo-album";
 import "react-photo-album/masonry.css";
 import {Lightbox} from "yet-another-react-lightbox"
 import "yet-another-react-lightbox/styles.css"
 
-import {useDraggable} from '@dnd-kit/core';
 import {CSS} from '@dnd-kit/utilities';
 
-import "react-photo-album/masonry.css";
-import "yet-another-react-lightbox/styles.css"
-
 import {DndContext} from '@dnd-kit/core';
-import {useSortable} from "@dnd-kit/sortable";
-import {SortableContext} from "@dnd-kit/sortable";
+import {arrayMove, SortableContext, useSortable} from "@dnd-kit/sortable";
 
 
 const GallerySection = ({images, name, id}) => {
-    const photos = images.map((image, index) => (
-        {src: image, width: 3840, height: 4800, id: id + "_photo_" + index}
+
+    const initialImages = images.map((image, index) => (
+        {id: id + "_photo_" + index, key:id + "_photo_" + index, src: image, width: 3840, height: 4800}
     ))
 
+    const [photos, setPhotos] = React.useState(initialImages);
     const [index, setIndex] = React.useState(-1);
 
     function wrapImage(props, index, photo) {
-        return <Draggable id={"draggable-photo-" + photo.id} wrappedProps={props}/>
+        return <Draggable key={"draggable-photo-" + photo.id} id={photo.id} wrappedProps={props}/>
     }
 
-    function handleDragEnd() {
+    function handleDragEnd(event) {
+        console.log(event);
+        const {active, over} = event;
+        if (active.id !== over.id) {
+            setPhotos((items) => {
+                const oldIndex = items.findIndex(photo => photo.id === active.id);
+                const newIndex = items.findIndex(photo => photo.id === over.id);
+                return arrayMove(items, oldIndex, newIndex); // arrayMove function from a library like dnd-kit utils
+            });
+
+            console.log(photos);
+        }
     }
 
     return (
         <>
             <h1 className={styles["gallery-section__name"]}>{name}</h1>
-            <DndContext>
-                <MasonryPhotoAlbum
-                    photos={photos}
-                    columns={3}
-                    render={{
-                        wrapper: (props, {index, photo}) => wrapImage(props, index, photo),
-                    }}
-                    /*
-                    onClick={({index: current}) => setIndex(current)}
-                    */
-                />
+            <DndContext onDragEnd={handleDragEnd}>
+                <SortableContext items={photos.map(photo => photo.id)} key={"sortable_context"+id}>
+                    <MasonryPhotoAlbum
+                        photos={photos}
+                        columns={3}
+                        render={{
+                            wrapper: (props, {index, photo}) => wrapImage(props, index, photo),
+                        }}
+                        /*
+                        onClick={({index: current}) => setIndex(current)}
+                        */
+                    />
+                </SortableContext>
             </DndContext>
 
             <Lightbox
@@ -56,21 +66,25 @@ const GallerySection = ({images, name, id}) => {
             />
         </>
     )
-
-
 };
 
 function Draggable(props) {
-    const {attributes, listeners, setNodeRef, transform} = useDraggable({
-        id: props.id
-    });
+    const {
+        attributes,
+        listeners,
+        setNodeRef,
+        transform,
+        transition,
+    } = useSortable({id: props.id});
+
     const style = {
-        transform: CSS.Translate.toString(transform),
+        transform: CSS.Transform.toString(transform),
+        transition,
     };
 
     return (
-        <div ref={setNodeRef} style={style} {...listeners} {...attributes}>
-            <div {...props.wrappedProps} />
+        <div key={"sortable-"+props.id} ref={setNodeRef} style={style} {...listeners} {...attributes}>
+            <div key={"ssortable-"+props.id} {...props.wrappedProps} />
         </div>
     );
 }

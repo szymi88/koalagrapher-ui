@@ -10,8 +10,8 @@ const Gallery = ({sections}) => {
     }
 
     const children = sections.map((section) => (
-        <div>
-            <GallerySection images={section.images} name={section.name} />
+        <div key={section.id}>
+            <GallerySection images={section.images} name={section.name} /> //FIXME name should not be key
         </div>
     ))
 

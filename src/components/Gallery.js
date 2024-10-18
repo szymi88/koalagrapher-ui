@@ -11,7 +11,8 @@ const Gallery = ({sections}) => {
 
     const children = sections.map((section) => (
         <div key={section.id}>
-            <GallerySection images={section.images} name={section.name} /> //FIXME name should not be key
+            {/* FIXME name should not be key*/}
+            <GallerySection images={section.images} name={section.name} />
         </div>
     ))
 

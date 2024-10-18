@@ -9,18 +9,24 @@ import "yet-another-react-lightbox/styles.css"
 
 import {useDraggable} from '@dnd-kit/core';
 import {CSS} from '@dnd-kit/utilities';
+
+import "react-photo-album/masonry.css";
+import "yet-another-react-lightbox/styles.css"
+
 import {DndContext} from '@dnd-kit/core';
+import {useSortable} from "@dnd-kit/sortable";
+import {SortableContext} from "@dnd-kit/sortable";
 
 
-const GallerySection = ({images, name}) => {
+const GallerySection = ({images, name, id}) => {
     const photos = images.map((image, index) => (
-        {src: image, width: 3840, height: 4800}
+        {src: image, width: 3840, height: 4800, id: id + "_photo_" + index}
     ))
 
     const [index, setIndex] = React.useState(-1);
 
-    function wrapImage(props, index) {
-        return <Draggable id={"draggable-photo-" + index} wrappedProps={props}/>
+    function wrapImage(props, index, photo) {
+        return <Draggable id={"draggable-photo-" + photo.id} wrappedProps={props}/>
     }
 
     function handleDragEnd() {
@@ -29,12 +35,12 @@ const GallerySection = ({images, name}) => {
     return (
         <>
             <h1 className={styles["gallery-section__name"]}>{name}</h1>
-            <DndContext onDragEnd={handleDragEnd}>
+            <DndContext>
                 <MasonryPhotoAlbum
                     photos={photos}
                     columns={3}
                     render={{
-                        wrapper: (props, {index, photo}) => wrapImage(props, index),
+                        wrapper: (props, {index, photo}) => wrapImage(props, index, photo),
                     }}
                     /*
                     onClick={({index: current}) => setIndex(current)}

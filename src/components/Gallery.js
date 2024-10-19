@@ -4,7 +4,7 @@ import styles from './Gallery.module.css';
 import {useParams} from "react-router-dom";
 import {getTestGallery} from "../data/gallery";
 
-const Gallery = ({sections}) => {
+const Gallery = ({sections, editable=false}) => {
     const {resultId} = useParams();
     if (sections.length === 0 && resultId === '123') {
         sections = getTestGallery();
@@ -12,7 +12,7 @@ const Gallery = ({sections}) => {
 
     const sectionsComponents = sections.map((section) => (
         <div key={section.id}>
-            <GallerySection section={section} editable={false} />
+            <GallerySection section={section} editable={editable} />
         </div>
     ))
 
@@ -27,7 +27,7 @@ const Gallery = ({sections}) => {
 
     function FullPagePhotoWithTitle({photoUrl, title}) {
         return (
-            <div className={styles["gallery"]}>
+            <div className={`${styles['gallery']} ${editable ? styles['gallery-edit-mode'] : ''}`}>
                 <img src={photoUrl} alt={title} className={styles["gallery__main-image"]}/>
                 <div className={styles["gallery__main-image__title"]}>
                     <h1>{title}</h1>

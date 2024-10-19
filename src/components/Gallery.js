@@ -1,26 +1,26 @@
 import React from 'react';
 import GallerySection from './GallerySection';
 import styles from './Gallery.module.css';
-import {testSections} from '../data/gallery.js';
+import {useParams} from "react-router-dom";
+import {getTestGallery} from "../data/gallery";
 
 const Gallery = ({sections}) => {
-    // const {resultId} = useParams();
-    if (sections.length === 0) {
-        sections = testSections
+    const {resultId} = useParams();
+    if (sections.length === 0 && resultId === '123') {
+        sections = getTestGallery();
     }
 
-    const children = sections.map((section) => (
+    const sectionsComponents = sections.map((section) => (
         <div key={section.id}>
-            {/* FIXME name should not be key*/}
-            <GallerySection images={section.images} name={section.name} />
+            <GallerySection section={section} editable={false} />
         </div>
     ))
 
     return (
         <div>
-            <FullPagePhotoWithTitle photoUrl={sections[0].images[0]} title={"Title - TODO"}/>
+            <FullPagePhotoWithTitle photoUrl={sections[0].images[0].src} title={"Title - TODO"}/>
             <div className={styles["gallery__sections"]}>
-                {children}
+                {sectionsComponents}
             </div>
         </div>
     );
@@ -36,7 +36,6 @@ const Gallery = ({sections}) => {
         );
     }
 }
-
 
 
 export default Gallery;

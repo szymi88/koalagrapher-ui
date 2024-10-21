@@ -22,38 +22,6 @@ const GallerySection = ({section, setPhotos, editable}) => {
         return <DraggableWrapper key={"draggable-photo-" + photo.id} id={photo.id} wrappedProps={props}/>
     }
 
-    function handleDragEnd(event) {
-        const {active, over} = event;
-        if (active.id !== over.id) {
-            const oldIndex = photos.findIndex(photo => photo.id === active.id);
-            const newIndex = photos.findIndex(photo => photo.id === over.id);
-
-            setPhotos(id, arrayMove(photos, oldIndex, newIndex));
-        }
-    }
-
-    function uploadPhotos(files) {
-        //TODO
-    }
-
-    function addPhotos(files) {
-        let nextId = photos.length;
-        files.map(files => {
-            let photoId = id + "_photo_" + nextId++;
-            return {
-                id: photoId,
-                key: photoId,
-                src: URL.createObjectURL(files),
-                width: 3840,
-                height: 4800
-            }
-        }).forEach((img) => photos.push(img));
-
-        setPhotos(id, [...photos]);
-
-        uploadPhotos(files);
-    }
-
     let onClick = null;
     if (!editable) {
         {/*A bit of a magic here. The wrapper handler is active only when the onClick is null.
@@ -66,9 +34,7 @@ const GallerySection = ({section, setPhotos, editable}) => {
     return (
         <>
             <h1 className={styles["gallery-section__name"]}>{name ? name : 'Default'}</h1>
-            <DropZone addPhotos={addPhotos}>
-                <DndContext onDragEnd={handleDragEnd}>
-                    <SortableContext items={photos.map(photo => photo.id)} key={"sortable_context" + id}>
+            <EditableGalleryWrapper photos={photos} setPhotos={setPhotos} sectionId={id}>
                         <MasonryPhotoAlbum
                             photos={photos}
                             columns={3}
@@ -77,9 +43,7 @@ const GallerySection = ({section, setPhotos, editable}) => {
                             }}
                             onClick={onClick}
                         />
-                    </SortableContext>
-                </DndContext>
-            </DropZone>
+            </EditableGalleryWrapper>
             <Lightbox
                 index={index}
                 slides={photos}
@@ -90,7 +54,7 @@ const GallerySection = ({section, setPhotos, editable}) => {
     );
 };
 
-function DraggableWrapper(props) {
+const DraggableWrapper = (props) => {
     const {
         attributes,
         listeners,
@@ -104,12 +68,52 @@ function DraggableWrapper(props) {
         transition,
     };
 
-    return (
-        <div key={"sortable-" + props.id} ref={setNodeRef} style={style} {...listeners} {...attributes}>
-            <div key={"photo-wrapper-" + props.id} {...props.wrappedProps} />
-        </div>
-    );
+    return <div key={"sortable-" + props.id} ref={setNodeRef} style={style} {...listeners} {...attributes}>
+        <div key={"photo-wrapper-" + props.id} {...props.wrappedProps} />
+    </div>
 }
+
+const EditableGalleryWrapper = ({children, photos, setPhotos, sectionId}) => {
+    function handleDragEnd(event) {
+        const {active, over} = event;
+        if (active.id !== over.id) {
+            const oldIndex = photos.findIndex(photo => photo.id === active.id);
+            const newIndex = photos.findIndex(photo => photo.id === over.id);
+
+            setPhotos(sectionId, arrayMove(photos, oldIndex, newIndex));
+        }
+    }
+
+    function addPhotos(files) {
+        let nextId = photos.length;
+        files.map(files => {
+            let photoId = sectionId + "_photo_" + nextId++;
+            return {
+                id: photoId,
+                key: photoId,
+                src: URL.createObjectURL(files),
+                width: 3840,
+                height: 4800
+            }
+        }).forEach((img) => photos.push(img));
+
+        setPhotos(sectionId, [...photos]);
+        uploadPhotos(files);
+    }
+
+    function uploadPhotos(files) {
+        //TODO
+    }
+
+    return <DropZone addPhotos={addPhotos}>
+        <DndContext onDragEnd={handleDragEnd}>
+            <SortableContext items={photos.map(photo => photo.id)} key={"sortable_context" + sectionId}>
+                {children}
+            </SortableContext>
+        </DndContext>
+    </DropZone>
+}
+
 
 const DropZone = ({children, addPhotos}) => {
 

@@ -9,6 +9,7 @@ import {getTestGallery} from "../data/gallery";
 const GalleryEditor = () => {
     const {galleryId} = useParams();
     const [sections, setSections] = useState([]);
+  //  const [sections, setSections] = useState([getTestGallery()[0]]);
 
     const addSection = () => {
         let newSection = {
@@ -16,8 +17,7 @@ const GalleryEditor = () => {
             photos: [],
             name: "Section Name"
         };
-        let newSection2 = getTestGallery()[0];
-        setSections(prevSections => [...prevSections, newSection2]);
+        setSections(prevSections => [...prevSections, newSection]);
     };
 
     const sectionButton = <button onClick={addSection}>Add Section...</button>;

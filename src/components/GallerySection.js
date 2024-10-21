@@ -30,19 +30,18 @@ const GallerySection = ({section, setPhotos, editable}) => {
         onClick = ({index: current}) => setIndex(current)
     }
 
-
     return (
         <>
             <h1 className={styles["gallery-section__name"]}>{name ? name : 'Default'}</h1>
             <EditableGalleryWrapper photos={photos} setPhotos={setPhotos} sectionId={id}>
-                        <MasonryPhotoAlbum
-                            photos={photos}
-                            columns={3}
-                            render={{
-                                wrapper: (props, {index, photo}) => wrapImage(props, index, photo),
-                            }}
-                            onClick={onClick}
-                        />
+                <MasonryPhotoAlbum
+                    photos={photos}
+                    columns={3}
+                    render={{
+                        wrapper: (props, {index, photo}) => wrapImage(props, index, photo),
+                    }}
+                    onClick={onClick}
+                />
             </EditableGalleryWrapper>
             <Lightbox
                 index={index}
@@ -105,9 +104,16 @@ const EditableGalleryWrapper = ({children, photos, setPhotos, sectionId}) => {
         //TODO
     }
 
+    const emptyDropZone = <div className={styles['gallery-section_dropzone']}>
+        <p>
+            Drop Photos Here...
+        </p>
+    </div>
+
     return <DropZone addPhotos={addPhotos}>
         <DndContext onDragEnd={handleDragEnd}>
             <SortableContext items={photos.map(photo => photo.id)} key={"sortable_context" + sectionId}>
+                {photos.length === 0 ? emptyDropZone : ''}
                 {children}
             </SortableContext>
         </DndContext>
@@ -117,18 +123,29 @@ const EditableGalleryWrapper = ({children, photos, setPhotos, sectionId}) => {
 
 const DropZone = ({children, addPhotos}) => {
 
-    function handlePhotosDrop(event) {
-        event.preventDefault();
+    const [isDragging, setIsDragging] = React.useState(false);
 
+
+    function onDrop(event) {
+        event.preventDefault();
+        setIsDragging(false);
         addPhotos([...event.dataTransfer.files]
             .filter(file => file.type.startsWith("image/")));
     }
 
     function onDragOver(event) {
         event.preventDefault();
+        setIsDragging(true);
     }
 
-    return <div className={styles["gallerySection__files-drop"]} onDrop={handlePhotosDrop} onDragOver={onDragOver}>
+    function onDragLeave(event) {
+        setIsDragging(false);
+    }
+
+    return <div className={`${styles['gallerySection__files-drop']} ${ isDragging ? styles['gallery-section_dropzone_active'] : ''}`}
+                onDrop={onDrop}
+                onDragOver={onDragOver}
+                onDragLeave={onDragLeave}>
         {children}
     </div>
 }

@@ -10,14 +10,13 @@ const Gallery = ({sections, setPhotos, editable=false}) => {
     ));
 
     function getCoverPhoto(sections) {
-        // if (sections.length === 0 ) {
-        //     return "";
-        // }
-        // if (sections[0].photos.length === 0 ) {
-        //     return "";
-        // }
-        // return sections[0].photos[0].src;
-        return "";
+         if (sections.length === 0 ) {
+             return "";
+         }
+         if (sections[0].photos.length === 0 ) {
+             return "";
+         }
+         return sections[0].photos[0].src;
     }
 
     return (

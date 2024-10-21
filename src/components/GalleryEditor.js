@@ -43,11 +43,6 @@ const GalleryEditor = () => {
                 </Col>
             </Row>
             <Row>
-                <Col xs={12}>
-                    <button>Add Section</button>
-                </Col>
-            </Row>
-            <Row>
                 <Col md={4}>Hello from editor for {galleryId}</Col>
                 <Col md={8}>
                     <Gallery sections={sections} setPhotos={handleSetPhotos} editable={true}/>

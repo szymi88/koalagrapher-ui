@@ -15,7 +15,6 @@ import {arrayMove, SortableContext, useSortable} from "@dnd-kit/sortable";
 
 const GallerySection = ({section, setPhotos, editable}) => {
     const {photos, name, id} = section;
-
     const [index, setIndex] = React.useState(-1);
 
     function wrapImage(props, index, photo) {

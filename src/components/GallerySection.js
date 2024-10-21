@@ -32,7 +32,9 @@ const GallerySection = ({section, setPhotos, editable}) => {
 
     return (
         <>
-            <h1 className={styles["gallery-section__name"]}>{name ? name : 'Default'}</h1>
+            <h1 className={styles["gallery-section__name"]} contenteditable={editable ? "true" : "false"}>
+                {name ? name : 'Default'}
+            </h1>
             <EditableGalleryWrapper photos={photos} setPhotos={setPhotos} sectionId={id}>
                 <MasonryPhotoAlbum
                     photos={photos}
@@ -142,7 +144,7 @@ const DropZone = ({children, addPhotos}) => {
         setIsDragging(false);
     }
 
-    return <div className={`${styles['gallerySection__files-drop']} ${ isDragging ? styles['gallery-section_dropzone_active'] : ''}`}
+    return <div className={`${styles['gallerySection__files-drop']} ${isDragging ? styles['gallery-section_dropzone_active'] : ''}`}
                 onDrop={onDrop}
                 onDragOver={onDragOver}
                 onDragLeave={onDragLeave}>

@@ -15,7 +15,7 @@ const GalleryEditor = () => {
         let newSection = {
             id: sections.length,
             photos: [],
-            name: "Section Name"
+            name: "Your Section Name"
         };
         setSections(prevSections => [...prevSections, newSection]);
     };

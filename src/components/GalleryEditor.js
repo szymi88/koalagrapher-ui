@@ -3,7 +3,6 @@ import {useParams} from "react-router-dom";
 import React, {useState} from 'react';
 import {Col, Container, Row} from 'react-bootstrap';
 import Gallery from "./Gallery";
-import {getTestGallery} from "../data/gallery";
 
 
 const GalleryEditor = () => {

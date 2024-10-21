@@ -24,9 +24,8 @@ const GallerySection = ({section, setPhotos, editable}) => {
 
     let onClick = null;
     if (!editable) {
-        {/*A bit of a magic here. The wrapper handler is active only when the onClick is null.
+        /*A bit of a magic here. The wrapper handler is active only when the onClick is null.
          So in edit mode we set onClick to null and activate drag and drop or we set onClick to ful screen view and drag is not active*/
-        }
         onClick = ({index: current}) => setIndex(current)
     }
 

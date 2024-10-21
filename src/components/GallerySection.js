@@ -13,10 +13,9 @@ import {DndContext} from '@dnd-kit/core';
 import {arrayMove, SortableContext, useSortable} from "@dnd-kit/sortable";
 
 
-const GallerySection = ({section, editable})  => {
-    const {images, name, id} = section;
+const GallerySection = ({section, setPhotos, editable}) => {
+    const {photos, name, id} = section;
 
-    const [photos, setPhotos] = React.useState(images);
     const [index, setIndex] = React.useState(-1);
 
     function wrapImage(props, index, photo) {
@@ -26,37 +25,61 @@ const GallerySection = ({section, editable})  => {
     function handleDragEnd(event) {
         const {active, over} = event;
         if (active.id !== over.id) {
-            setPhotos((items) => {
-                const oldIndex = items.findIndex(photo => photo.id === active.id);
-                const newIndex = items.findIndex(photo => photo.id === over.id);
-                return arrayMove(items, oldIndex, newIndex);
-            });
+            const oldIndex = photos.findIndex(photo => photo.id === active.id);
+            const newIndex = photos.findIndex(photo => photo.id === over.id);
+
+            setPhotos(id, arrayMove(photos, oldIndex, newIndex));
         }
+    }
+
+    function uploadPhotos(files) {
+        //TODO
+    }
+
+    function addPhotos(files) {
+        let nextId = photos.length;
+        files.map(files => {
+            let photoId = id + "_photo_" + nextId++;
+            return {
+                id: photoId,
+                key: photoId,
+                src: URL.createObjectURL(files),
+                width: 3840,
+                height: 4800
+            }
+        }).forEach((img) => photos.push(img));
+
+        setPhotos(id, [...photos]);
+
+        uploadPhotos(files);
     }
 
     let onClick = null;
     if (!editable) {
         {/*A bit of a magic here. The wrapper handler is active only when the onClick is null.
-         So in edit mode we set onClick to null and activate drag and drop or we set onClick to ful screen view and drag is not active*/}
+         So in edit mode we set onClick to null and activate drag and drop or we set onClick to ful screen view and drag is not active*/
+        }
         onClick = ({index: current}) => setIndex(current)
     }
 
+
     return (
         <>
-            <h1 className={styles["gallery-section__name"]}>{name}</h1>
-            <DndContext onDragEnd={handleDragEnd}>
-                <SortableContext items={photos.map(photo => photo.id)} key={"sortable_context" + id}>
-                    <MasonryPhotoAlbum
-                        photos={photos}
-                        columns={3}
-                        render={{
-                            wrapper: (props, {index, photo}) => wrapImage(props, index, photo),
-                        }}
-                        onClick={onClick}
-                    />
-                </SortableContext>
-            </DndContext>
-
+            <h1 className={styles["gallery-section__name"]}>{name ? name : 'Default'}</h1>
+            <DropZone addPhotos={addPhotos}>
+                <DndContext onDragEnd={handleDragEnd}>
+                    <SortableContext items={photos.map(photo => photo.id)} key={"sortable_context" + id}>
+                        <MasonryPhotoAlbum
+                            photos={photos}
+                            columns={3}
+                            render={{
+                                wrapper: (props, {index, photo}) => wrapImage(props, index, photo),
+                            }}
+                            onClick={onClick}
+                        />
+                    </SortableContext>
+                </DndContext>
+            </DropZone>
             <Lightbox
                 index={index}
                 slides={photos}
@@ -86,6 +109,24 @@ function DraggableWrapper(props) {
             <div key={"photo-wrapper-" + props.id} {...props.wrappedProps} />
         </div>
     );
+}
+
+const DropZone = ({children, addPhotos}) => {
+
+    function handlePhotosDrop(event) {
+        event.preventDefault();
+
+        addPhotos([...event.dataTransfer.files]
+            .filter(file => file.type.startsWith("image/")));
+    }
+
+    function onDragOver(event) {
+        event.preventDefault();
+    }
+
+    return <div className={styles["gallerySection__files-drop"]} onDrop={handlePhotosDrop} onDragOver={onDragOver}>
+        {children}
+    </div>
 }
 
 export default GallerySection;

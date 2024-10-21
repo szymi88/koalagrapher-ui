@@ -1,24 +1,28 @@
 import React from 'react';
 import GallerySection from './GallerySection';
 import styles from './Gallery.module.css';
-import {useParams} from "react-router-dom";
-import {getTestGallery} from "../data/gallery";
 
-const Gallery = ({sections, editable=false}) => {
-    const {resultId} = useParams();
-    if (sections.length === 0 && resultId === '123') {
-        sections = getTestGallery();
-    }
-
+const Gallery = ({sections, setPhotos, editable=false}) => {
     const sectionsComponents = sections.map((section) => (
         <div key={section.id}>
-            <GallerySection section={section} editable={editable} />
+            <GallerySection section={section} setPhotos={setPhotos} editable={editable}/>
         </div>
-    ))
+    ));
+
+    function getCoverPhoto(sections) {
+        // if (sections.length === 0 ) {
+        //     return "";
+        // }
+        // if (sections[0].photos.length === 0 ) {
+        //     return "";
+        // }
+        // return sections[0].photos[0].src;
+        return "";
+    }
 
     return (
         <div>
-            <FullPagePhotoWithTitle photoUrl={sections[0].images[0].src} title={"Title - TODO"}/>
+            <FullPagePhotoWithTitle photoUrl={getCoverPhoto(sections)} title={"Title - TODO"}/>
             <div className={styles["gallery__sections"]}>
                 {sectionsComponents}
             </div>

@@ -11,6 +11,7 @@ import {CSS} from '@dnd-kit/utilities';
 
 import {DndContext} from '@dnd-kit/core';
 import {arrayMove, SortableContext, useSortable} from "@dnd-kit/sortable";
+import {Image as Img} from 'react-native';
 
 
 const GallerySection = ({section, setPhotos, editable}) => {
@@ -30,7 +31,7 @@ const GallerySection = ({section, setPhotos, editable}) => {
 
     return (
         <>
-            <h1 className={styles["gallery-section__name"]} contenteditable={editable ? "true" : "false"}>
+            <h1 className={styles["gallery-section__name"]} contentEditable={editable ? "true" : "false"}>
                 {name ? name : 'Default'}
             </h1>
             <EditableGalleryWrapper photos={photos} setPhotos={setPhotos} sectionId={id}>
@@ -83,20 +84,28 @@ const EditableGalleryWrapper = ({children, photos, setPhotos, sectionId}) => {
         }
     }
 
-    function addPhotos(files) {
+    async function addPhotos(files) {
         let nextId = photos.length;
-        files.map(files => {
+        const newPhotos = await Promise.all(files.map(async file => {
             let photoId = sectionId + "_photo_" + nextId++;
+            let url = URL.createObjectURL(file);
+            const { width, height } = await new Promise((resolve, reject) => {
+                Img.getSize(url, (width, height) => resolve({width, height}), reject);
+            });
             return {
                 id: photoId,
                 key: photoId,
-                src: URL.createObjectURL(files),
-                width: 3840,
-                height: 4800
+                src: url,
+                width: width,
+                height: height
             }
-        }).forEach((img) => photos.push(img));
+        }));
 
+        newPhotos.forEach(photo => {
+            photos.push(photo);
+        });
         setPhotos(sectionId, [...photos]);
+
         uploadPhotos(files);
     }
 

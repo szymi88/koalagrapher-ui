@@ -2,7 +2,7 @@
 import React, {useState} from 'react';
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import SectionManager from './components/SectionManager';
-import Gallery from './components/Gallery';
+import GalleryPreview from './components/GalleryPreview';
 import GalleryEditor from "./components/GalleryEditor";
 
 
@@ -15,7 +15,7 @@ function App() {
                 <Route path="/" element={<SectionManager sections={sections} setSections={setSections}/>}>
                 </Route>
                 <Route path="/edit/gallery/:resultId" element={<GalleryEditor/>}/>
-                <Route path="/gallery/:resultId" element={<Gallery sections={sections}/>}/>
+                <Route path="/gallery/:galleryId" element={<GalleryPreview sections={sections}/>}/>
             </Routes>
         </BrowserRouter>
     );

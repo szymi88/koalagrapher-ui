@@ -2,10 +2,23 @@ import React from 'react';
 import GallerySection from './GallerySection';
 import styles from './Gallery.module.css';
 
-const Gallery = ({sections, setPhotos, editable=false}) => {
+const Gallery = ({sections, updateSections, editable=false}) => {
+
+    const updateSection = (updatedSection) => {
+        updateSections(prevSections =>
+            prevSections.map(section => {
+                if (section.id === updatedSection.id) {
+                    return updatedSection;
+                }
+                return section;
+            })
+        );
+    };
+
+
     const sectionsComponents = sections.map((section) => (
         <div key={section.id}>
-            <GallerySection section={section} setPhotos={setPhotos} editable={editable}/>
+            <GallerySection section={section} updateSection={updateSection} editable={editable}/>
         </div>
     ));
 

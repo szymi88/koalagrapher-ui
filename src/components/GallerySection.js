@@ -14,9 +14,15 @@ import {arrayMove, SortableContext, useSortable} from "@dnd-kit/sortable";
 import {Image as Img} from 'react-native';
 
 
-const GallerySection = ({section, setPhotos, editable}) => {
+const GallerySection = ({section, updateSection, editable}) => {
     const {photos, name, id} = section;
     const [index, setIndex] = React.useState(-1);
+    const [sectionTitle, setSectionTitle] = React.useState('Click to edit');
+
+    const updatePhotos = (id, updatedPhotos) => {
+        section.photos = updatedPhotos;
+        updateSection(section);
+    }
 
     function wrapImage(props, index, photo) {
         return <DraggableWrapper key={"draggable-photo-" + photo.id} id={photo.id} wrappedProps={props}/>
@@ -29,12 +35,17 @@ const GallerySection = ({section, setPhotos, editable}) => {
         onClick = ({index: current}) => setIndex(current)
     }
 
+    function updateTitle(event) {
+        console.log("updateTitle", event);
+        setSectionTitle(event.target.innerText);
+    }
+
     return (
         <>
-            <h1 className={styles["gallery-section__name"]} contentEditable={editable ? "true" : "false"}>
-                {name ? name : 'Default'}
+            <h1 className={styles["gallery-section__name"]} contentEditable={editable ? "true" : "false"} onChangeCapture={updateTitle}>
+                {sectionTitle}
             </h1>
-            <EditableGalleryWrapper photos={photos} setPhotos={setPhotos} sectionId={id}>
+            <EditableGalleryWrapper photos={photos} setPhotos={updatePhotos} sectionId={id}>
                 <MasonryPhotoAlbum
                     photos={photos}
                     columns={3}

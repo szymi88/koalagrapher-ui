@@ -1,5 +1,7 @@
 .gallery-section__name {
     text-align: center;
+    margin-top: 4rem;
+    margin-bottom: 2rem;
 }
 
 .gallery-section_dropzone {
@@ -14,10 +16,6 @@
     font-size: 16px;
     font-family: Arial, sans-serif;
     transition: background-color 0.3s ease;
-
-    /*&:hover {*/
-    /*    background-color: rgba(0, 0, 0, 0.1); !* Slightly darker on hover *!*/
-    /*}*/
 }
 
 .gallery-section_dropzone_active {

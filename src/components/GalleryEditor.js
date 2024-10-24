@@ -8,23 +8,31 @@ import { v4 as uuidv4 } from 'uuid'; // Import UUID library
 
 const GalleryEditor = () => {
     const {galleryId} = useParams();
-    const [sections, setSections] = useState([]);
+    const [gallery, setGallery] = useState({
+        title: "New Gallery",
+        sections: []
+    });
+
     const navigate = useNavigate();
 
     //  const [sections, setSections] = useState([getTestGallery()[0]]);
 
     const addSection = () => {
         let newSection = {
-            id: sections.length,
+            id: gallery.sections.length,
             photos: [],
-            name: "Your Section Name"
+            title: "Change me..."
         };
-        setSections(prevSections => [...prevSections, newSection]);
-    };
+        setSections([...gallery.sections, newSection]);
+    }
+
+    const setSections = (sections) => {
+        setGallery({...gallery, sections} );
+    }
 
     const openPreview = () => {
         const resultId = uuidv4(); // Generate a unique ID
-        navigate(`/gallery/${resultId}`, {state: {sections}} );
+        navigate(`/gallery/${resultId}`, {state: {gallery}} );
     }
 
     const sectionButton = <>
@@ -46,7 +54,7 @@ const GalleryEditor = () => {
             <Row>
                 <Col md={4}>Hello from editor for {galleryId}</Col>
                 <Col md={8}>
-                    <Gallery sections={sections} updateSections={updateSections} editable={true}/>
+                    <Gallery gallery={gallery} updateSections={updateSections} updateGallery={setGallery} editable={true}/>
                 </Col>
             </Row>
             <Row>

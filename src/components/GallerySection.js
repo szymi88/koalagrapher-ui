@@ -12,12 +12,12 @@ import {CSS} from '@dnd-kit/utilities';
 import {DndContext} from '@dnd-kit/core';
 import {arrayMove, SortableContext, useSortable} from "@dnd-kit/sortable";
 import {Image as Img} from 'react-native';
+import ContentEditable from 'react-contenteditable';
 
 
 const GallerySection = ({section, updateSection, editable}) => {
-    const {photos, name, id} = section;
     const [index, setIndex] = React.useState(-1);
-    const [sectionTitle, setSectionTitle] = React.useState('Click to edit');
+    //  const [sectionTitle, setSectionTitle] = React.useState(section.title);
 
     const updatePhotos = (id, updatedPhotos) => {
         section.photos = updatedPhotos;
@@ -36,31 +36,46 @@ const GallerySection = ({section, updateSection, editable}) => {
     }
 
     function updateTitle(event) {
-        console.log("updateTitle", event);
-        setSectionTitle(event.target.innerText);
+        updateSection({
+            ...section,
+            title: event.target.value
+        })
+    }
+
+    let photos = <MasonryPhotoAlbum
+        photos={section.photos}
+        columns={3}
+        render={{
+            wrapper: (props, {index, photo}) => wrapImage(props, index, photo),
+        }}
+        onClick={onClick}
+    />
+
+    if (editable) {
+        photos = <EditableGalleryWrapper photos={section.photos} setPhotos={updatePhotos} sectionId={section.id}>
+            {photos}
+        </EditableGalleryWrapper>;
+    } else {
+        photos = <>
+            {photos}
+            < Lightbox
+                index={index}
+                slides={section.photos}
+                open={index >= 0}
+                close={() => setIndex(-1)}
+            />
+        </>
     }
 
     return (
         <>
-            <h1 className={styles["gallery-section__name"]} contentEditable={editable ? "true" : "false"} onChangeCapture={updateTitle}>
-                {sectionTitle}
+            <h1 className={styles["gallery-section__name"]}>
+                {editable ? <ContentEditable
+                    onChange={updateTitle}
+                    html={section.title}>
+                </ContentEditable> : section.title}
             </h1>
-            <EditableGalleryWrapper photos={photos} setPhotos={updatePhotos} sectionId={id}>
-                <MasonryPhotoAlbum
-                    photos={photos}
-                    columns={3}
-                    render={{
-                        wrapper: (props, {index, photo}) => wrapImage(props, index, photo),
-                    }}
-                    onClick={onClick}
-                />
-            </EditableGalleryWrapper>
-            <Lightbox
-                index={index}
-                slides={photos}
-                open={index >= 0}
-                close={() => setIndex(-1)}
-            />
+            {photos}
         </>
     );
 };
@@ -84,7 +99,10 @@ const DraggableWrapper = (props) => {
     </div>
 }
 
-const EditableGalleryWrapper = ({children, photos, setPhotos, sectionId}) => {
+const EditableGalleryWrapper = ({
+                                    children, photos, setPhotos, sectionId
+                                }) => {
+
     function handleDragEnd(event) {
         const {active, over} = event;
         if (active.id !== over.id) {
@@ -100,7 +118,7 @@ const EditableGalleryWrapper = ({children, photos, setPhotos, sectionId}) => {
         const newPhotos = await Promise.all(files.map(async file => {
             let photoId = sectionId + "_photo_" + nextId++;
             let url = URL.createObjectURL(file);
-            const { width, height } = await new Promise((resolve, reject) => {
+            const {width, height} = await new Promise((resolve, reject) => {
                 Img.getSize(url, (width, height) => resolve({width, height}), reject);
             });
             return {
@@ -141,7 +159,9 @@ const EditableGalleryWrapper = ({children, photos, setPhotos, sectionId}) => {
 }
 
 
-const DropZone = ({children, addPhotos}) => {
+const DropZone = ({
+                      children, addPhotos
+                  }) => {
 
     const [isDragging, setIsDragging] = React.useState(false);
 

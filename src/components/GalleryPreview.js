@@ -4,9 +4,9 @@ import Gallery from "./Gallery";
 
 const GalleryPreview = () => {
     const location = useLocation();
-    const { sections } = location.state || {};
+    const { gallery } = location.state || {};
 
-    return <Gallery sections={sections} editable={false}/>
+    return <Gallery gallery={gallery} editable={false}/>
 }
 
 export default GalleryPreview;

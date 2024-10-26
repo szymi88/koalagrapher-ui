@@ -1,3 +1,5 @@
+import config from '../config';
+
 const testSections = [
     {
         "images": [
@@ -14,7 +16,7 @@ const testSections = [
         ],
         "name": "Section 1",
         "id": 0
-    },{
+    }, {
         "images": [
             "https://images.unsplash.com/photo-1728756195397-f0d898354dbc?w=2000&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxmZWF0dXJlZC1waG90b3MtZmVlZHwxMzZ8fHxlbnwwfHx8fHw%3D",
             "https://images.unsplash.com/photo-1728662965625-6838648b8198?w=2000&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxmZWF0dXJlZC1waG90b3MtZmVlZHwxMzd8fHxlbnwwfHx8fHw%3D",
@@ -66,8 +68,11 @@ const testSections = [
     }]
 
 
-export function getTestGallery() {
-    return testSections.map(section => ({
+function getTestGallery() {
+    return {
+        id: "123",
+        title: "Test Gallery",
+        sections: testSections.map(section => ({
             photos: section.images.map((image, index) => ({
                 id: section.id + "_photo_" + index,
                 key: section.id + "_photo_" + index,
@@ -77,5 +82,16 @@ export function getTestGallery() {
             })),
             id: section.id,
             name: section.name
-        }));
+        }))
+    };
+}
+
+export const getGallery = async (id) => {
+    if (id === "123") {
+        return getTestGallery();
+    }
+
+    const response = await fetch(`${config.API_GALLERIES_URL}/${id}`);
+    if (!response.ok) throw new Error(`Fetching gallery ${id} failed: ${response.statusText}`);
+    return await response.json();
 }

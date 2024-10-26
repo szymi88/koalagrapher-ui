@@ -3,8 +3,8 @@ import {useNavigate, useParams} from "react-router-dom";
 import React, {useRef, useState} from 'react';
 import {Button, Col, Container, Row,} from 'react-bootstrap';
 import Gallery from "./Gallery";
-import {v4 as uuidv4} from 'uuid'; // Import UUID library
 import styles from './GalleryEditor.module.css';
+import {saveGallery} from "../data/gallery-editor";
 
 const GalleryEditor = () => {
     const {galleryId} = useParams();
@@ -32,19 +32,20 @@ const GalleryEditor = () => {
         setGallery({...gallery, sections});
     }
 
+    const updateSections = (sections) => {
+        setSections(sections);
+    }
+
     const openPreview = () => {
-        const resultId = uuidv4(); // Generate a unique ID
-        navigate(`/gallery/${resultId}`, {state: {gallery}});
+        navigate("/preview/gallery", {state: {gallery}});
     }
 
     const sectionButton = <>
         <Button variant="light" onClick={addSection}>Add Section...</Button>
         <Button variant="light" onClick={openPreview}>Preview</Button>
+        <Button variant="light" onClick={() => saveGallery(gallery)}>Save Gallery</Button>
     </>
 
-    const updateSections = (sections) => {
-        setSections(sections);
-    }
 
     return (
         <div className="container-fluid">
@@ -68,12 +69,11 @@ const GalleryEditor = () => {
             </Container>
             <Container fluid className={styles.fixedContainer}>
                 <Row className="justify-content-md-end">
-                    <Col xs={3}>{sectionButton}</Col>
+                    <Col xs={5}>{sectionButton}</Col>
                 </Row>
             </Container>
         </div>
     )
-
 }
 
 export default GalleryEditor;

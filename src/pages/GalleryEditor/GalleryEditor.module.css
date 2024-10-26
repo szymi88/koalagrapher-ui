@@ -1,5 +1,5 @@
 .scrollableContainer {
-    height: calc(100vh - 60px); /* Adjust the height as needed */
+    height: calc(100vh - 60px);
     overflow-y: auto;
 }
 
@@ -8,5 +8,4 @@
     bottom: 0;
     left: 0;
     width: 100%;
-    /* Add your desired styling for the fixed container */
 }

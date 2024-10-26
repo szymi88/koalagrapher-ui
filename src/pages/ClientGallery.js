@@ -1,6 +1,6 @@
 import {useParams} from "react-router-dom";
 import React, {useEffect, useState} from "react";
-import Gallery from "./Gallery";
+import Gallery from "../components/Gallery/Gallery";
 import {getGallery} from "../data/gallery";
 
 const ClientGallery = () => {

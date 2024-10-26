@@ -1,8 +1,8 @@
 import React from 'react';
 import {BrowserRouter, Route, Routes} from "react-router-dom";
-import GalleryPreview from './components/GalleryPreview';
-import GalleryEditor from "./components/GalleryEditor";
-import ClientGallery from "./components/ClientGallery";
+import GalleryPreview from './pages/GalleryPreview';
+import GalleryEditor from "./pages/GalleryEditor/GalleryEditor";
+import ClientGallery from "./pages/ClientGallery";
 
 
 function App() {

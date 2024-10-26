@@ -1,18 +1,11 @@
 import {useParams} from "react-router-dom";
-import React, {useEffect, useState} from "react";
+import React from "react";
 import Gallery from "../components/Gallery/Gallery";
-import {getGallery} from "../data/gallery";
+import useGallery from "../hooks/useGallery";
 
 const ClientGallery = () => {
     const {galleryId} = useParams();
-    const [gallery, setGallery] = useState(null);
-    const [error, setError] = useState(null);
-
-    useEffect(() => {
-        getGallery(galleryId).then((ret) => {
-            setGallery(ret);
-        }).catch(setError);
-    }, [galleryId]);
+    const [gallery, error] = useGallery(galleryId);
 
     if (error) {
         return "Error: " + error;

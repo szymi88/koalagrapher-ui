@@ -1,7 +1,6 @@
-import config from "../config";
+import config from "../configs";
 
 export const saveGallery = async (gallery) => {
-    console.log(gallery);
     try {
         const response = await fetch(config.API_GALLERIES_URL, {
             method: 'POST',
@@ -19,4 +18,10 @@ export const saveGallery = async (gallery) => {
     } catch (error) {
         console.error('Fetch error:', error);
     }
+}
+
+export const fetchGallery = async (id) => {
+    const response = await fetch(`${config.API_GALLERIES_URL}/${id}`);
+    if (!response.ok) throw new Error(`Fetching gallery ${id} failed: ${response.statusText}`);
+    return await response.json();
 }

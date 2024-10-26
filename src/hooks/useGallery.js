@@ -1,4 +1,27 @@
-import config from '../config';
+import {useEffect, useState} from 'react';
+import {fetchGallery} from "../api/gallery";
+
+function useGallery(galleryId) {
+    const [gallery, setGallery] = useState(null);
+    const [error, setError] = useState(null);
+
+    useEffect(() => {
+        getGallery(galleryId).then((ret) => {
+            setGallery(ret);
+        }).catch(setError);
+    }, [galleryId]);
+
+
+    return [gallery, error];
+}
+
+export const getGallery = async (id) => {
+    if (id === "123") {
+        return getTestGallery();
+    }
+    return fetchGallery(id)
+}
+
 
 const testSections = [
     {
@@ -86,12 +109,5 @@ function getTestGallery() {
     };
 }
 
-export const getGallery = async (id) => {
-    if (id === "123") {
-        return getTestGallery();
-    }
 
-    const response = await fetch(`${config.API_GALLERIES_URL}/${id}`);
-    if (!response.ok) throw new Error(`Fetching gallery ${id} failed: ${response.statusText}`);
-    return await response.json();
-}
+export default useGallery;

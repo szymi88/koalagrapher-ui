@@ -4,7 +4,7 @@ import React, {useRef, useState} from 'react';
 import {Button, Col, Container, Row,} from 'react-bootstrap';
 import Gallery from "../../components/Gallery/Gallery";
 import styles from './GalleryEditor.module.css';
-import {saveGallery} from "../../data/gallery-editor";
+import {saveGallery} from "../../api/gallery";
 
 const GalleryEditor = () => {
     const {galleryId} = useParams();

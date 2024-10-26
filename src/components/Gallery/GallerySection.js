@@ -13,7 +13,7 @@ import {DndContext} from '@dnd-kit/core';
 import {arrayMove, SortableContext, useSortable} from "@dnd-kit/sortable";
 import {Image as Img} from 'react-native';
 import ContentEditable from 'react-contenteditable';
-
+import useUploadPhotos from '../../hooks/useUploadPhotos';
 
 const GallerySection = ({section, updateSection, editable}) => {
     const [index, setIndex] = React.useState(-1);
@@ -113,14 +113,35 @@ const EditableGalleryWrapper = ({
         }
     }
 
+    const onPhotoUploadSuccess = (photo, photoUrl) => {
+
+        //TODO
+        console.log(photo, photoUrl);
+    }
+    const onPhotoUploadError = () => {
+        //TODO
+    }
+
+    const uploadPhoto = useUploadPhotos(onPhotoUploadSuccess, onPhotoUploadError)
+
+
     async function addPhotos(files) {
         let nextId = photos.length;
-        const newPhotos = await Promise.all(files.map(async file => {
+
+        let photosForUpload = files.map(file => {
             let photoId = sectionId + "_photo_" + nextId++;
             let url = URL.createObjectURL(file);
+            return {photoId, url, file};
+        });
+
+        //FIXME: remove those async - should work with handlers and mapping
+        let updateGalleryPromises = photosForUpload.map(async ({photoId, url, file}) => {
+            console.log(photoId);
             const {width, height} = await new Promise((resolve, reject) => {
                 Img.getSize(url, (width, height) => resolve({width, height}), reject);
             });
+            console.log("photoId");
+
             return {
                 id: photoId,
                 key: photoId,
@@ -128,18 +149,20 @@ const EditableGalleryWrapper = ({
                 width: width,
                 height: height
             }
-        }));
-
-        newPhotos.forEach(photo => {
-            photos.push(photo);
         });
-        setPhotos(sectionId, [...photos]);
 
-        uploadPhotos(files);
-    }
+        Promise.all(updateGalleryPromises).then(newPhotos => {
+            newPhotos.forEach(photo => {
+                photos.push(photo);
+            });
+            setPhotos(sectionId, [...photos]);
+        });
 
-    function uploadPhotos(files) {
-        //TODO
+        let serverUploadPromises = photosForUpload.map(({photoId, url, file}) => {
+            uploadPhoto(photoId, file);
+        });
+
+        await Promise.all(serverUploadPromises);
     }
 
     const emptyDropZone = <div className={styles['gallery-section_dropzone']}>
@@ -157,7 +180,6 @@ const EditableGalleryWrapper = ({
         </DndContext>
     </DropZone>
 }
-
 
 const DropZone = ({
                       children, addPhotos

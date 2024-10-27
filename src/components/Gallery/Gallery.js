@@ -21,7 +21,6 @@ const Gallery = ({gallery, updateSections, updateGallery, editable = false}) => 
             <GallerySection section={section} updateSection={updateSection} editable={editable}/>
         </div>
     ));
-
     return (
         <div className={styles.galleryWrapper}>
             <div className={styles.gallery}>

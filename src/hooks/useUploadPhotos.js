@@ -15,9 +15,7 @@ function useUploadPhotos(onUploadSuccess, onUploadError) {
                 throw new Error('Upload failed');
             }
 
-            const data = await response.json();
-
-            onUploadSuccess(file, data.imageUrl);
+            onUploadSuccess(id);
         } catch (err) {
             onUploadError(err);
         }

@@ -69,6 +69,11 @@ const GalleryEditor = () => {
                 return section;
             })
             setGallery({...gallery, sections});
+        } else if (changeEvent.type === "section-title-change") {
+            gallery.sections
+                .find(section => section.id === changeEvent.sectionId)
+                .title = changeEvent.title;
+            setGallery(gallery);
         }
     }
 

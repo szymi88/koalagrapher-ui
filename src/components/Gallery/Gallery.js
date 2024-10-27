@@ -3,18 +3,7 @@ import GallerySection from './GallerySection';
 import styles from './Gallery.module.css';
 import ContentEditable from "react-contenteditable";
 
-const Gallery = ({gallery, onGalleryChange, updateSections, updateGallery, editable = false}) => {
-
-    const updateSection = (updatedSection) => {
-        updateSections(
-            gallery.sections.map(section => {
-                if (section.id === updatedSection.id) {
-                    return updatedSection;
-                }
-                return section;
-            })
-        );
-    };
+const Gallery = ({gallery, onGalleryChange, editable = false}) => {
 
     const handleSectionChange = (sectionId, sectionEvent) => {
         onGalleryChange({
@@ -25,7 +14,7 @@ const Gallery = ({gallery, onGalleryChange, updateSections, updateGallery, edita
 
     const sectionsComponents = gallery.sections.map((section) => (
         <div key={section.id}>
-            <GallerySection section={section} onSectionChange={event=> handleSectionChange(section.id, event)} updateSection={updateSection} editable={editable}/>
+            <GallerySection section={section} onSectionChange={event=> handleSectionChange(section.id, event)} editable={editable}/>
         </div>
     ));
     return (

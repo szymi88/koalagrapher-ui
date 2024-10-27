@@ -11,9 +11,9 @@ import {CSS} from '@dnd-kit/utilities';
 import {useSortable} from "@dnd-kit/sortable";
 import ContentEditable from 'react-contenteditable';
 import EditableGalleryWrapper from "./EditableGalleryWrapper";
-import mapToGalleryFormat from "../../data/gallery-section";
+import {assetLink} from "../../api/photos";
 
-const GallerySection = ({section, onSectionChange, updateSection, editable}) => {
+const GallerySection = ({section, onSectionChange, editable}) => {
     const [index, setIndex] = React.useState(-1);
 
     function wrapImage(props, index, photo) {
@@ -28,9 +28,9 @@ const GallerySection = ({section, onSectionChange, updateSection, editable}) => 
     }
 
     function updateTitle(event) {
-        updateSection({
-            ...section,
-            title: event.target.value
+        onSectionChange({
+            type : "section-title-change",
+            title: event.target.value,
         })
     }
 
@@ -46,7 +46,7 @@ const GallerySection = ({section, onSectionChange, updateSection, editable}) => 
     />
 
     if (editable) {
-        photos = <EditableGalleryWrapper photos={section.photos} onChange = {onSectionChange} sectionId={section.id}>
+        photos = <EditableGalleryWrapper photos={section.photos} onChange={onSectionChange} sectionId={section.id}>
             {photos}
         </EditableGalleryWrapper>;
     } else {
@@ -91,6 +91,29 @@ const DraggableWrapper = (props) => {
     return <div key={"sortable-" + props.id} ref={setNodeRef} style={style} {...listeners} {...attributes}>
         <div key={"photo-wrapper-" + props.id} {...props.wrappedProps} />
     </div>
+}
+
+const mapToGalleryFormat = (photos) => {
+    const breakpoints = [3840, 1920, 1080, 640, 384, 256, 128];
+
+    return photos.map(photo => {
+        let localResource = photo.url && photo.url.startsWith('blob:');
+        let result = {
+            src: localResource ? photo.url : assetLink(photo.id, photo.width),
+            key: photo.id,
+            id: photo.id,
+            width: photo.width,
+            height: photo.height
+        }
+        if (!localResource) {
+            result.srcSet = breakpoints.map((breakpoint) => ({
+                src: assetLink(photo.id, breakpoint),
+                width: breakpoint,
+                height: Math.round((photo.height / photo.width) * breakpoint),
+            }));
+        }
+        return result;
+    });
 }
 
 

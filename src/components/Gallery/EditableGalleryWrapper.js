@@ -6,31 +6,35 @@ import {Image as Img} from 'react-native';
 import ImageDropZone from "./ImageDropZone";
 
 
-const EditableGalleryWrapper = ({
-                                    children, photos, setPhotos, sectionId
-                                }) => {
+const EditableGalleryWrapper = ({children, onChange, photos, sectionId}) => {
 
     function handleDragEnd(event) {
+
         const {active, over} = event;
         if (over && active.id !== over.id) {
-            const oldIndex = photos.findIndex(photo => photo.id === active.id);
-            const newIndex = photos.findIndex(photo => photo.id === over.id);
-
-            setPhotos(sectionId, arrayMove(photos, oldIndex, newIndex));
+            onChange({
+                type : "photos-swap",
+                oldIndex: photos.findIndex(photo => photo.id === active.id),
+                newIndex: photos.findIndex(photo => photo.id === over.id)
+            });
         }
     }
 
     const onPhotoUploadSuccess = (uploadedPhotoId) => {
-        let p = photos.map(photo => {
-            if (photo.id === uploadedPhotoId) {
-                photo.uploaded = true;
-            }
-            return photo;
+        onChange({
+            type : "photo-uploaded",
+            photoId: uploadedPhotoId
         });
-        setPhotos(sectionId, p);
     }
-    const onPhotoUploadError = () => {
+
+    const onPhotoUploadError = (uploadedPhotoId, err) => {
         //TODO
+
+        // onChange({
+        //     type : "photo-uploaded",
+        //     photoId: uploadedPhotoId,
+        //     err: err
+        // });
     }
 
     const uploadPhoto = useUploadPhotos(onPhotoUploadSuccess, onPhotoUploadError)
@@ -54,7 +58,7 @@ const EditableGalleryWrapper = ({
             return {
                 id: photoId,
                 key: photoId,
-                src: url,
+                url: url,
                 width: width,
                 height: height
             }
@@ -62,9 +66,11 @@ const EditableGalleryWrapper = ({
 
         Promise.all(updateGalleryPromises).then(newPhotos => {
             newPhotos.forEach(photo => {
-                photos.push(photo);
+                onChange({
+                    type : "photo-added",
+                    photo: photo
+                })
             });
-            setPhotos(sectionId, [...photos]);
         });
 
         let serverUploadPromises = photosForUpload.map(({photoId, url, file}) => {

@@ -5,6 +5,7 @@ import {Button, Col, Container, Row,} from 'react-bootstrap';
 import Gallery from "../../components/Gallery/Gallery";
 import styles from './GalleryEditor.module.css';
 import {saveGallery} from "../../api/gallery";
+import {arrayMove} from "@dnd-kit/sortable";
 
 const GalleryEditor = () => {
     const {galleryId} = useParams();
@@ -36,6 +37,41 @@ const GalleryEditor = () => {
         setSections(sections);
     }
 
+    const handleGalleryChange = (changeEvent) => {
+        console.log(changeEvent);
+
+        if (changeEvent.type ===  "photos-swap") {
+            let sections = gallery.sections.map(section => {
+                if (section.id === changeEvent.sectionId) {
+                    let currentPhotos = section.photos;
+                    section.photos = arrayMove(currentPhotos, changeEvent.oldIndex, changeEvent.newIndex);
+                    return section;
+                }
+                return section;
+            })
+            setGallery({...gallery, sections});
+        } else if (changeEvent.type === "photo-uploaded") {
+            let sections = gallery.sections.map(section => {
+                if (section.id === changeEvent.sectionId) {
+                    let photo = section.photos.find(photo => photo.id === changeEvent.photoId);
+                    photo.uploaded = true;
+                    return section;
+                }
+                return section;
+            })
+            setGallery({...gallery, sections});
+        } else if (changeEvent.type === "photo-added") {
+            let sections = gallery.sections.map(section => {
+                if (section.id === changeEvent.sectionId) {
+                    section.photos.push(changeEvent.photo);
+                    return section;
+                }
+                return section;
+            })
+            setGallery({...gallery, sections});
+        }
+    }
+
     const openPreview = () => {
         navigate("/preview/gallery", {state: {gallery}});
     }
@@ -58,7 +94,7 @@ const GalleryEditor = () => {
                 <Row>
                     <Col md={4}>Hello from editor for {galleryId}</Col>
                     <Col md={8}>
-                        <Gallery gallery={gallery} updateSections={updateSections} updateGallery={setGallery} editable={true}/>
+                        <Gallery gallery={gallery} onGalleryChange={handleGalleryChange} updateSections={updateSections} updateGallery={setGallery} editable={true}/>
                     </Col>
                 </Row>
                 <Row>

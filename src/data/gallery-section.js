@@ -1,21 +1,28 @@
-function map_images(images) {
+import configs from "../configs";
+
+export default function mapToGalleryFormat(photos) {
     const breakpoints = [3840, 1920, 1080, 640, 384, 256, 128];
 
-    function assetLink(asset, breakpoint) {
-        // return `https://assets.yet-another-react-lightbox.com/_next/image?url=${encodeURIComponent(
-        //     `/_next/static/media/${asset}`
-        // )}&w=${width}&q=75`;
-        return "TODO"
+    function assetLink(photoId, width) {
+        return `${configs.API_IMAGES_URL}/${photoId}&w=${width}`;
     }
 
-    return images.map(({asset, width, height}) => ({
-        src: assetLink(asset, width),
-        width,
-        height,
-        srcSet: breakpoints.map((breakpoint) => ({
-            src: assetLink(asset, breakpoint),
-            width: breakpoint,
-            height: Math.round((height / width) * breakpoint),
-        }))
-    }));
+    return photos.map(photo => {
+        let localResource = photo.url && photo.url.startsWith('blob:');
+        let result = {
+            src: localResource ? photo.url : assetLink(photo.id, photo.width),
+            key: photo.id,
+            id: photo.id,
+            width: photo.width,
+            height: photo.height
+        }
+        if (!localResource) {
+            result.srcSet = breakpoints.map((breakpoint) => ({
+                    src: assetLink(photo.id, breakpoint),
+                    width: breakpoint,
+                    height: Math.round((photo.height / photo.width) * breakpoint),
+                }));
+        }
+        return result;
+    });
 }

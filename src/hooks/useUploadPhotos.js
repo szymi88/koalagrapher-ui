@@ -6,7 +6,7 @@ function useUploadPhotos(onUploadSuccess, onUploadError) {
         const formData = new FormData();
         formData.append('file', file);
         try {
-            const response = await fetch(`${config.API_IMAGES_URL}/${id}`, {
+            const response = await fetch(`${config.API_IMAGES_URL}/upload/${id}`, {
                 method: 'POST',
                 body: formData
             });

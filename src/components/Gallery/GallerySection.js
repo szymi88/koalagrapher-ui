@@ -11,15 +11,10 @@ import {CSS} from '@dnd-kit/utilities';
 import {useSortable} from "@dnd-kit/sortable";
 import ContentEditable from 'react-contenteditable';
 import EditableGalleryWrapper from "./EditableGalleryWrapper";
+import mapToGalleryFormat from "../../data/gallery-section";
 
-const GallerySection = ({section, updateSection, editable}) => {
+const GallerySection = ({section, onSectionChange, updateSection, editable}) => {
     const [index, setIndex] = React.useState(-1);
-    //  const [sectionTitle, setSectionTitle] = React.useState(section.title);
-
-    const updatePhotos = (id, updatedPhotos) => {
-        section.photos = updatedPhotos;
-        updateSection(section);
-    }
 
     function wrapImage(props, index, photo) {
         return <DraggableWrapper key={"draggable-photo-" + photo.id} id={photo.id} wrappedProps={props}/>
@@ -39,8 +34,10 @@ const GallerySection = ({section, updateSection, editable}) => {
         })
     }
 
+    let mappedPhotos = mapToGalleryFormat(section.photos);
+
     let photos = <MasonryPhotoAlbum
-        photos={section.photos}
+        photos={mappedPhotos}
         columns={3}
         render={{
             wrapper: (props, {index, photo}) => wrapImage(props, index, photo),
@@ -49,7 +46,7 @@ const GallerySection = ({section, updateSection, editable}) => {
     />
 
     if (editable) {
-        photos = <EditableGalleryWrapper photos={section.photos} setPhotos={updatePhotos} sectionId={section.id}>
+        photos = <EditableGalleryWrapper photos={section.photos} onChange = {onSectionChange} sectionId={section.id}>
             {photos}
         </EditableGalleryWrapper>;
     } else {
@@ -57,7 +54,7 @@ const GallerySection = ({section, updateSection, editable}) => {
             {photos}
             < Lightbox
                 index={index}
-                slides={section.photos}
+                slides={mappedPhotos}
                 open={index >= 0}
                 close={() => setIndex(-1)}
             />

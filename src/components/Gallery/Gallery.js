@@ -3,7 +3,7 @@ import GallerySection from './GallerySection';
 import styles from './Gallery.module.css';
 import ContentEditable from "react-contenteditable";
 
-const Gallery = ({gallery, updateSections, updateGallery, editable = false}) => {
+const Gallery = ({gallery, onGalleryChange, updateSections, updateGallery, editable = false}) => {
 
     const updateSection = (updatedSection) => {
         updateSections(
@@ -16,9 +16,16 @@ const Gallery = ({gallery, updateSections, updateGallery, editable = false}) => 
         );
     };
 
+    const handleSectionChange = (sectionId, sectionEvent) => {
+        onGalleryChange({
+            ...sectionEvent,
+            sectionId: sectionId,
+        });
+    }
+
     const sectionsComponents = gallery.sections.map((section) => (
         <div key={section.id}>
-            <GallerySection section={section} updateSection={updateSection} editable={editable}/>
+            <GallerySection section={section} onSectionChange={event=> handleSectionChange(section.id, event)} updateSection={updateSection} editable={editable}/>
         </div>
     ));
     return (
@@ -36,7 +43,7 @@ const Gallery = ({gallery, updateSections, updateGallery, editable = false}) => 
         let coverPhoto;
 
         if (gallery.sections.length !== 0 && gallery.sections[0].photos.length !== 0) {
-            let coverPhotoUrl = gallery.sections[0].photos[0].src;
+            let coverPhotoUrl = gallery.sections[0].photos[0].url;
             coverPhoto = <img src={coverPhotoUrl} alt={gallery.title} className={styles.coverPhoto}/>;
         } else {
             coverPhoto = <div className={styles.coverPhotoPlaceholder}/>

@@ -1,22 +1,37 @@
 import {useNavigate, useParams} from "react-router-dom";
 
-import React, {useRef, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {Button, Col, Container, Row,} from 'react-bootstrap';
 import Gallery from "../../components/Gallery/Gallery";
 import styles from './GalleryEditor.module.css';
 import {saveGallery} from "../../api/gallery";
 import {arrayMove} from "@dnd-kit/sortable";
+import {getGallery} from "../../hooks/useGallery";
+import LoadingView from "../../components/LoadingView";
 
 const GalleryEditor = () => {
+    const navigate = useNavigate();
     const {galleryId} = useParams();
     const scrollableGalleryPreview = useRef(null);
 
-    const [gallery, setGallery] = useState({
-        title: "New Gallery",
-        sections: []
-    });
+    const [gallery, setGallery] = useState(null);
+    useEffect(() => {
+        if (!galleryId) {
+            setGallery({
+                title: "New Gallery",
+                sections: []
+            })
+        } else {
+            getGallery(galleryId).then((fetchedGallery) => {
+                setGallery(fetchedGallery)
+            })
+        }
+    }, [galleryId]);
 
-    const navigate = useNavigate();
+    if (!gallery) {
+        return <LoadingView/>
+    }
+
 
     const addSection = () => {
         let newSection = {
@@ -40,7 +55,7 @@ const GalleryEditor = () => {
     const handleGalleryChange = (changeEvent) => {
         console.log(changeEvent);
 
-        if (changeEvent.type ===  "photos-swap") {
+        if (changeEvent.type === "photos-swap") {
             let sections = gallery.sections.map(section => {
                 if (section.id === changeEvent.sectionId) {
                     let currentPhotos = section.photos;
@@ -82,9 +97,9 @@ const GalleryEditor = () => {
     }
 
     const sectionButton = <>
-        <Button variant="light" onClick={addSection}>Add Section...</Button>
-        <Button variant="light" onClick={openPreview}>Preview</Button>
-        <Button variant="light" onClick={() => saveGallery(gallery)}>Save Gallery</Button>
+        <Button variant={"dark"} onClick={addSection}>Add Section...</Button>
+        <Button variant={"dark"} onClick={openPreview}>Preview</Button>
+        <Button variant={"dark"} onClick={() => saveGallery(gallery)}>Save Gallery</Button>
     </>
 
 
@@ -109,8 +124,12 @@ const GalleryEditor = () => {
                 </Row>
             </Container>
             <Container fluid className={styles.fixedContainer}>
-                <Row className="justify-content-md-end">
-                    <Col xs={5}>{sectionButton}</Col>
+                <Row>
+                    <Col xs={{span: 12}}>
+                        <div className={"d-flex justify-content-end"}>
+                            {sectionButton}
+                        </div>
+                    </Col>
                 </Row>
             </Container>
         </div>

@@ -1,22 +1,36 @@
 import config from "../configs";
 
-export const saveGallery = async (gallery) => {
-    try {
-        const response = await fetch(config.API_GALLERIES_URL, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(gallery)
-        });
+export const saveGallery = (gallery, onSuccess) => {
+    handleApiCall(async () => await fetch(`${config.API_GALLERIES_URL}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(gallery)
+    })).then(onSuccess);
+}
 
-        if (response.ok) {
-            return await response.json();
-        } else {
-            console.error('Error:', response.statusText);
-        }
-    } catch (error) {
-        console.error('Fetch error:', error);
+export const updateGallery = (gallery, onSuccess) => {
+    if (!gallery.id) {
+        throw new Error("Can't update gallery with no id");
+    }
+
+    handleApiCall(async () => await fetch(`${config.API_GALLERIES_URL}/${gallery.id}`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(gallery)
+    })).then(onSuccess);
+}
+
+const handleApiCall = async (call) => {
+    const response = await call();
+
+    if (response.ok) {
+        return await response.json();
+    } else {
+        throw new Error('API call unsuccessful, status code: ' + response.statusText);
     }
 }
 

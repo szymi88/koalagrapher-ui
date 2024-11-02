@@ -7,8 +7,6 @@ const ClientGallery = () => {
     const {galleryId} = useParams();
     const [gallery, error] = useGallery(galleryId);
 
-    console.log(gallery);
-
     if (error) {
         return "Error: " + error;
     }

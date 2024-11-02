@@ -16,8 +16,6 @@ const GalleryList = () => {
         )
     }, []);
 
-    console.log(galleryList);
-
     return <ListGroup gap={3}>
         {galleryList.map(gallery =>
             <ListGroup.Item action variant="light" onClick={() => navigate(`/gallery/${gallery.id}/edit`)}>

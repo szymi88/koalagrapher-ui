@@ -28,10 +28,25 @@ const GalleryEditor = () => {
         }
     }, [galleryId]);
 
+    useEffect(() => {
+        if (gallery &&
+            !gallery.coverPhoto
+            && gallery.sections.length > 0
+            && gallery.sections[0].photos
+            && gallery.sections[0].photos.length > 0
+        ) {
+            setCoverPhoto(gallery.sections[0].photos[0]);
+        }
+    }, [gallery]);
+
     if (!gallery) {
         return <LoadingView/>
     }
 
+
+    const setCoverPhoto = (photo) => {
+        setGallery({...gallery, coverPhoto: photo } );
+    }
 
     const addSection = () => {
         let newSection = {

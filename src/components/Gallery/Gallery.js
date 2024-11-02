@@ -14,7 +14,7 @@ const Gallery = ({gallery, onGalleryChange, editable = false}) => {
 
     const sectionsComponents = gallery.sections.map((section) => (
         <div key={section.id}>
-            <GallerySection section={section} onSectionChange={event=> handleSectionChange(section.id, event)} editable={editable}/>
+            <GallerySection section={section} onSectionChange={event => handleSectionChange(section.id, event)} editable={editable}/>
         </div>
     ));
     return (
@@ -28,19 +28,11 @@ const Gallery = ({gallery, onGalleryChange, editable = false}) => {
         </div>
     );
 
+
     function FullPagePhotoWithTitle({gallery, editable}) {
-        let coverPhoto;
-
-        if (gallery.sections.length !== 0 && gallery.sections[0].photos.length !== 0) {
-            let coverPhotoUrl = gallery.sections[0].photos[0].url;
-            coverPhoto = <img src={coverPhotoUrl} alt={gallery.title} className={styles.coverPhoto}/>;
-        } else {
-            coverPhoto = <div className={styles.coverPhotoPlaceholder}/>
-        }
-
         return (
             <div className={`${styles.coverPhotoWrapper} ${editable ? styles.coverPhotoWrapperEditMode : ''}`}>
-                {coverPhoto}
+                <CoverPhoto gallery={gallery}/>
                 <div className={styles.coverPhotoTitle}>
                     <h1>
                         {editable ? <ContentEditable onChange={(event) => gallery.title = event.target.value} html={gallery.title}></ContentEditable> : gallery.title}
@@ -51,5 +43,12 @@ const Gallery = ({gallery, onGalleryChange, editable = false}) => {
     }
 }
 
+const CoverPhoto = ({gallery}) => {
+    if (gallery.coverPhoto) {
+        return <img src={gallery.coverPhoto.url} alt={gallery.title} className={styles.coverPhoto}/>
+    } else {
+        return <div className={styles.coverPhotoPlaceholder}/>
+    }
+}
 
 export default Gallery;

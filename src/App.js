@@ -10,6 +10,7 @@ function App() {
     return (
         <BrowserRouter>
             <Routes>
+                <Route path="/" element={<GalleryList/>}/>
                 <Route path="/galleries" element={<GalleryList/>}/>
                 <Route path="/gallery/new" element={<GalleryEditor/>}/>
                 <Route path="/gallery/:galleryId/edit" element={<GalleryEditor/>}/>

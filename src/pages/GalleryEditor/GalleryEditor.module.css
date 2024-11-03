@@ -1,6 +1,9 @@
 .scrollableContainer {
-    height: calc(100vh - 60px);
-    overflow-y: auto;
+    height: 100%;
+}
+
+.mainSection {
+    overflow: hidden;
 }
 
 .fixedContainer {

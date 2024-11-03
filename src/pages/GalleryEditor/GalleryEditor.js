@@ -122,36 +122,34 @@ const GalleryEditor = () => {
         <Button variant={"dark"} onClick={openPreview}>Preview</Button>
         <Button variant={"dark"} onClick={onClickSaveGallery}>Save Gallery</Button>
     </>
-
-
     return (
-        <div className="container-fluid">
-            <Container ref={scrollableGalleryPreview} fluid className={styles.scrollableContainer}>
-                <Row>
-                    <Col xs={12} className={"justify-content-center"}>
-                        <h1 className="text-center">GALLERY EDITOR</h1>
-                    </Col>
-                </Row>
-                <Row>
-                    <Col md={4}>
-                        <GallerySettings gallery={gallery}/>
-                    </Col>
-                    <Col md={8}>
+        <Container fluid className="d-flex flex-column vh-100">
+            <Row className="bg-light ext-black p-3">
+                <Col>
+                    <h1 className="text-center">GALLERY EDITOR</h1>
+                </Col>
+            </Row>
+
+            <Row className={`flex-grow-1 d-flex ${styles.mainSection}`}>
+                <Col xs={"4"} className="bg-light p-3 d-flex flex-column">
+                    <GallerySettings gallery={gallery}/>
+                </Col>
+
+                <Col className={`bg-light text-black p-3 overflow-auto ${styles.scrollableContainer}`}>
+                    <div>
                         <Gallery gallery={gallery} onGalleryChange={handleGalleryChange} updateSections={updateSections} updateGallery={setGallery} editable={true}/>
-                    </Col>
-                </Row>
-            </Container>
-            <Container fluid className={styles.fixedContainer}>
-                <Row>
-                    <Col xs={{span: 12}}>
-                        <div className={"d-flex justify-content-end"}>
-                            {sectionButton}
-                        </div>
-                    </Col>
-                </Row>
-            </Container>
-        </div>
-    )
+                    </div>
+                </Col>
+            </Row>
+
+            <Row className="bg-light text-white p-3">
+                <Col className={"d-flex justify-content-end"}>
+                    {sectionButton}
+                </Col>
+            </Row>
+        </Container>
+    );
+
 }
 
 const GallerySettings = ({gallery}) => {

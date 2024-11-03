@@ -1,7 +1,7 @@
 import {useNavigate, useParams} from "react-router-dom";
 
 import React, {useEffect, useRef, useState} from 'react';
-import {Button, Col, Container, Row,} from 'react-bootstrap';
+import {Button, Col, Container, Form, Row,} from 'react-bootstrap';
 import Gallery from "../../components/Gallery/Gallery";
 import styles from './GalleryEditor.module.css';
 import {saveGallery, updateGallery} from "../../api/gallery";
@@ -45,7 +45,7 @@ const GalleryEditor = () => {
 
 
     const setCoverPhoto = (photo) => {
-        setGallery({...gallery, coverPhoto: photo } );
+        setGallery({...gallery, coverPhoto: photo});
     }
 
     const addSection = () => {
@@ -128,19 +128,16 @@ const GalleryEditor = () => {
         <div className="container-fluid">
             <Container ref={scrollableGalleryPreview} fluid className={styles.scrollableContainer}>
                 <Row>
-                    <Col xs={12}>
-                        This is Gallery Editor.
+                    <Col xs={12} className={"justify-content-center"}>
+                        <h1 className="text-center">GALLERY EDITOR</h1>
                     </Col>
                 </Row>
                 <Row>
-                    <Col md={4}>Hello from editor for {galleryId}</Col>
+                    <Col md={4}>
+                        <GallerySettings gallery={gallery}/>
+                    </Col>
                     <Col md={8}>
                         <Gallery gallery={gallery} onGalleryChange={handleGalleryChange} updateSections={updateSections} updateGallery={setGallery} editable={true}/>
-                    </Col>
-                </Row>
-                <Row>
-                    <Col md={4}></Col>
-                    <Col md={8}>
                     </Col>
                 </Row>
             </Container>
@@ -155,6 +152,25 @@ const GalleryEditor = () => {
             </Container>
         </div>
     )
+}
+
+const GallerySettings = ({gallery}) => {
+    return <div>
+        <Form>
+            <Form.Group className="mb-4">
+                <Form.Label>Title</Form.Label>
+                <Form.Control placeholder="New Gallery Title"/>
+            </Form.Group>
+            <Form.Group className="mb-4">
+                <Form.Label>Description</Form.Label>
+                <Form.Control placeholder=""/>
+            </Form.Group>
+            <Form.Group className="mb-4">
+                <Form.Label>Date</Form.Label>
+                <Form.Control typplaceholder=""/>
+            </Form.Group>
+        </Form>
+    </div>
 }
 
 export default GalleryEditor;

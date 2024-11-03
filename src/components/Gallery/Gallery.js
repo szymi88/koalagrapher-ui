@@ -2,6 +2,7 @@ import React from 'react';
 import GallerySection from './GallerySection';
 import styles from './Gallery.module.css';
 import ContentEditable from "react-contenteditable";
+import {assetLink} from "../../api/photos";
 
 const Gallery = ({gallery, onGalleryChange, editable = false}) => {
 
@@ -45,7 +46,13 @@ const Gallery = ({gallery, onGalleryChange, editable = false}) => {
 
 const CoverPhoto = ({gallery}) => {
     if (gallery.coverPhoto) {
-        return <img src={gallery.coverPhoto.url} alt={gallery.title} className={styles.coverPhoto}/>
+        console.log(gallery.coverPhoto);
+        let url = gallery.coverPhoto.url;
+        if (!url) {
+            url = assetLink(gallery.coverPhoto.id, 1920);
+        }
+        console.log(url);
+        return <img src={url} alt={gallery.title} className={styles.coverPhoto}/>;
     } else {
         return <div className={styles.coverPhotoPlaceholder}/>
     }

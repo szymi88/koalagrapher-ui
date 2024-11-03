@@ -12,6 +12,7 @@ import {useSortable} from "@dnd-kit/sortable";
 import ContentEditable from 'react-contenteditable';
 import EditableGalleryWrapper from "./EditableGalleryWrapper";
 import {assetLink} from "../../api/photos";
+import {Fullscreen, Slideshow, Thumbnails, Zoom} from "yet-another-react-lightbox/plugins";
 
 const GallerySection = ({section, onSectionChange, editable}) => {
     const [index, setIndex] = React.useState(-1);
@@ -57,6 +58,7 @@ const GallerySection = ({section, onSectionChange, editable}) => {
                 slides={mappedPhotos}
                 open={index >= 0}
                 close={() => setIndex(-1)}
+                plugins={[Fullscreen, Slideshow, Thumbnails, Zoom]}
             />
         </>
     }
